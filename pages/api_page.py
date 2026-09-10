@@ -23,10 +23,7 @@ class ApiPage:
     def search_person(self, actor_name: str, profession_act: str) -> requests.Response:
         """Метод для поиска персоны (актера, режиссера и т.д.)."""
         url = f"{self.base_url}/v1.5/person"
-        params = {
-            "name": actor_name,
-            "profession.value": profession_act
-        }
+        params = {"name": actor_name, "profession.value": profession_act}
         return self.session.get(url, params=params)
 
     @allure.step("Получение фильма по ID: {film_id}")

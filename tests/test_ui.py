@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from pages.main_page import MainPage
-from config import MAIN_URL, MAIN_PAGE_TITLE, TEST_MOVIE_NAME, BROWSER
+from config import MAIN_PAGE_TITLE, TEST_MOVIE_NAME, BROWSER
 
 
 @allure.epic("UI тесты Кинопоиска")
@@ -16,7 +16,7 @@ class TestUI:
     @pytest.fixture(autouse=True)
     def setup(self):
         options = Options()
-        #options.add_argument("--headless=new")
+        # options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
@@ -41,16 +41,14 @@ class TestUI:
     def test_main_page_opens(self):
         self.page.open()
         title = self.page.get_page_title()
-        assert MAIN_PAGE_TITLE in title, \
-            f"Ожидали '{MAIN_PAGE_TITLE}', получили '{title}'"
+        assert MAIN_PAGE_TITLE in title, f"Ожидали '{MAIN_PAGE_TITLE}', получили '{title}'"
 
     @allure.story("Позитивный: поиск фильма")
     @allure.title("Поиск фильма '{TEST_MOVIE_NAME}' возвращает результаты")
     def test_search_movie(self):
         self.page.open().search(TEST_MOVIE_NAME)
         page_source = self.driver.page_source.lower()
-        assert TEST_MOVIE_NAME.lower() in page_source, \
-            f"На странице нет результатов по запросу '{TEST_MOVIE_NAME}'"
+        assert TEST_MOVIE_NAME.lower() in page_source, f"На странице нет результатов по запросу '{TEST_MOVIE_NAME}'"
 
     @allure.story("Позитивный: переход на страницу фильма")
     @allure.title("Клик по первому результату открывает страницу фильма")
@@ -63,16 +61,15 @@ class TestUI:
     @allure.title("После поиска URL содержит поисковый запрос")
     def test_url_changes_after_search(self):
         self.page.open().search(TEST_MOVIE_NAME)
-        assert "search" in self.driver.current_url or \
-               "film" in self.driver.current_url, \
-               f"URL не изменился: {self.driver.current_url}"
+        assert (
+            "search" in self.driver.current_url or "film" in self.driver.current_url
+        ), f"URL не изменился: {self.driver.current_url}"
 
     @allure.story("Негативный: поиск несуществующего фильма")
     @allure.title("Поиск 'фывапролдж12345' не находит результатов")
     def test_search_nonexistent_movie(self):
         self.page.open().search("фывапролдж12345")
         page_source = self.driver.page_source.lower()
-        assert "ничего не найдено" in page_source or \
-               "не найдено" in page_source or \
-               "нет результатов" in page_source, \
-               "Страница не сообщила об отсутствии результатов"
+        assert (
+            "ничего не найдено" in page_source or "не найдено" in page_source or "нет результатов" in page_source
+        ), "Страница не сообщила об отсутствии результатов"

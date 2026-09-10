@@ -18,15 +18,9 @@ API_KEY = os.getenv("API_KEY")
 
 # Защита от None: если токена нет — падаем сразу с понятной ошибкой
 if not API_KEY:
-    raise ValueError(
-        "Не задан API_KEY! Проверь файл .env в корне проекта. "
-        "Формат строки: API_KEY=твой_токен"
-    )
+    raise ValueError("Не задан API_KEY! Проверь файл .env в корне проекта. " "Формат строки: API_KEY=твой_токен")
 
-MY_HEADERS = {
-    "X-API-KEY": API_KEY,
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-}
+MY_HEADERS = {"X-API-KEY": API_KEY, "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # === Тестовые данные ===
 MOVIE_ID = int(os.getenv("MOVIE_ID", 455188))

@@ -162,7 +162,7 @@ pytest --clean-alluredir      # очистить прошлые результа
 - **Репозиторий:** https://github.com/juliyavinyarskaya92-del/diplom_project_Kinopoisk.git
 
 ---
-#Часть 8. Полезные команды для работы с README
+# Часть 8. Полезные команды для работы с README
 
 Создать README.md в корне
 bash
@@ -180,4 +180,69 @@ gh repo view --web
 bash
 git add README.md
 git commit -m "docs: complete README with install and usage instructions"
+git push
+
+---
+# Часть 9: "Причесывание кода по параметрам и стандартам"
+
+# 9.1 Проверка пунктуации и разметки внутри кода по PEP8— это стандарт оформления Python-кода. Соблюдение PEP8:
+-Делает код единообразным в команде.
+-Улучшает читаемость.
+-Облегчает code review.
+-Требуется в большинстве компаний (и в ТЗ твоего диплома).
+Шаги:
+1. Установить PEP8: pip install flake8
+2. в терминале вписать команду: flake8 . --exclude=.venv,.git,__pycache__,allure-results,allure-report,.pytest_cache --max-line-length=120
+В случае нахождения ошибрк по PEP8? можно обратиться к помощи black
+
+# 9.2 Установить black- переформатирует код, но не меняет логику
+Шаги:
+1. Установить: pip install black
+2. В терминале команда: black . --exclude='\.venv|\.git|__pycache__|allure-results|allure-report|\.pytest_cache' --line-length=120
+
+После работы black нужно:
+1. В терминале запустить повторную проверку: flake8
+2. Затем, в случае если больше нет ошибок от flake8(PEP8), то необходимо повторно прогнать тесты, чтобы убедиться, что ничего не повредилось при устранении синтактических ошибок:
+3. В терминале команда: pytest -q
+
+# 9.3 Проверить diff в Git:
+# 9.3.1: Посмотриv, что именно изменил black:
+powershell
+git diff
+Это покажет все изменения.
+
+# 9.3.2: Проверка, что тесты работают.
+powershell
+git diff --stat
+
+# 9.3.3: Если тесты прошли:
+powershell
+git add .
+
+# Проверить статус:
+
+powershell
+git status
+
+Убедиться, что в staging только нужные файлы:
+✅ README.md
+✅ config.py
+✅ pages/api_page.py
+✅ pages/main_page.py
+✅ tests/test_api.py
+✅ tests/test_ui.py
+
+НЕ должно быть:
+❌ .env
+❌ allure-results/
+❌ __pycache__/
+❌ .venv/
+
+# Шаг Коммит:
+powershell
+git commit -m "style: apply black formatting and finalize project"
+
+# Шаг Push:
+
+powershell
 git push
