@@ -1,64 +1,56 @@
 import allure
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-
-class Locators:
-    SEARCH_FIELD = (By.NAME, "search")
-    SEARCH_BUTTON = (By.CSS_SELECTOR, "[type='submit']")
-    TITLES = (By.CSS_SELECTOR, "div.product-card__content")
-    POPUP_CLOSE = (By.CSS_SELECTOR, '[data-popmechanic-close]')
-    CITY_CONFIRM = (By.CSS_SELECTOR, '.chg-app-button--primary.chg-app-button--block')
+from config import MAIN_URL, IMPLICIT_WAIT
 
 
 class MainPage:
-    def __init__(self, driver, url):
+    """Page Object главной страницы Кинопоиска."""
+
+    # === Локаторы ===
+    SEARCH_INPUT = (By.CSS_SELECTOR, "input[role='combobox'][placeholder*='Фильмы']")
+    FIRST_RESULT_LINK = (
+        By.CSS_SELECTOR,
+        "a[href*='/film/'], a[href*='/series/'], a[data-tid]"
+    )
+    MOVIE_TITLE = (By.CSS_SELECTOR, "h1[data-tid], h1")
+
+    def __init__(self, driver):
         self.driver = driver
-        self.driver.maximize_window()
-        self.driver.get(url)
+        self.wait = WebDriverWait(driver, IMPLICIT_WAIT)
 
-    def _wait_for_elements(self, locator, multiple=False, timeout=10):
-        if multiple:
-            return WebDriverWait(self.driver, timeout).until(
-                EC.visibility_of_all_elements_located(locator))
-        else:
-            return WebDriverWait(self.driver, timeout).until(
-                EC.visibility_of_element_located(locator))
+    @allure.step("Открываем главную страницу Кинопоиска")
+    def open(self):
+        self.driver.get(MAIN_URL)
+        return self
 
-    @allure.step("Выбор города")
-    def close_popups(self):
-        city_elements = WebDriverWait(self.driver, 20).until(
-            EC.presence_of_all_elements_located(Locators.CITY_CONFIRM)
+    @allure.step("Ищем фильм: {query}")
+    def search(self, query: str):
+        search_input = self.wait.until(
+            EC.presence_of_element_located(self.SEARCH_INPUT)
         )
-        if city_elements and city_elements[0].is_displayed():
-            city_elements[0].click()
-            WebDriverWait(self.driver, 10).until(
-                EC.invisibility_of_element_located(Locators.CITY_CONFIRM)
-            )
+        search_input.clear()
+        search_input.send_keys(query)
+        search_input.send_keys(Keys.ENTER)
+        return self
 
-        popup_elements = WebDriverWait(self.driver, 20).until(
-            EC.presence_of_all_elements_located(Locators.POPUP_CLOSE)
+    @allure.step("Кликаем по первому результату поиска")
+    def click_first_result(self):
+        first = self.wait.until(
+            EC.element_to_be_clickable(self.FIRST_RESULT_LINK)
         )
-        if popup_elements and popup_elements[0].is_displayed():
-            popup_elements[0].click()
-            WebDriverWait(self.driver, 10).until(
-                EC.invisibility_of_element_located(Locators.POPUP_CLOSE)
-            )
+        first.click()
+        return self
 
-    @allure.step("Проверка заголовка страницы")
-    def check_page_title(self, expected_title):
-        WebDriverWait(self.driver, 10).until(EC.title_is(expected_title))
-        return True
+    @allure.step("Получаем заголовок фильма")
+    def get_movie_title(self) -> str:
+        title = self.wait.until(
+            EC.visibility_of_element_located(self.MOVIE_TITLE)
+        )
+        return title.text
 
-    @allure.step("Поиск товара по фразе")
-    def search_goods(self, phrase):
-        search_field = self._wait_for_elements(Locators.SEARCH_FIELD, multiple=False)
-        search_field.send_keys(phrase)
-        search_button = self._wait_for_elements(Locators.SEARCH_BUTTON, multiple=False)
-        search_button.click()
-
-    @allure.step("Получаем количество элементов в результатах поиска")
-    def get_search_results_count(self):
-        elements = self._wait_for_elements(Locators.TITLES, multiple=True)
-        return len(elements)
+    @allure.step("Получаем title страницы")
+    def get_page_title(self) -> str:
+        return self.driver.title
