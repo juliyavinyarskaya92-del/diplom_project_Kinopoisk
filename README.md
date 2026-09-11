@@ -94,7 +94,7 @@ pip install -r requirements.txt
 
 ### 4. Создай файл `.env` в корне проекта
 
-Скопируй `.env.example` → `.env` и заполни своими значениями:
+Скопируй `example_env` → `.env` и заполни своими значениями:
 
 ```
 API_KEY=твой_токен_от_poiskkino
@@ -162,7 +162,7 @@ pytest --clean-alluredir      # очистить прошлые результа
 - **Репозиторий:** https://github.com/juliyavinyarskaya92-del/diplom_project_Kinopoisk.git
 
 ---
-# Часть 8. Полезные команды для работы с README
+# (по желанию, не обязательный блок, черновик)Часть 8. Полезные команды для работы с README
 
 Создать README.md в корне
 bash

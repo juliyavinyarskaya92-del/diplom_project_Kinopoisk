@@ -29,6 +29,9 @@ class MainPage:
         search_input.clear()
         search_input.send_keys(query)
         search_input.send_keys(Keys.ENTER)
+
+        # Ждём, что URL сменился на страницу поиска
+        self.wait.until(EC.url_contains("/new-search/"))
         return self
 
     @allure.step("Кликаем по первому результату поиска")
